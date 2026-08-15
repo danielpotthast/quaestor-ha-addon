@@ -1,0 +1,36 @@
+name: Quaestor
+version: "0.3.12"
+slug: quaestor
+description: Consolidates the balances and transactions from all your banks into a single, private, self-hosted view.
+url: https://github.com/felixschndr/quaestor
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: application
+boot: auto
+ports:
+  8000/tcp: 8000
+ports_description:
+  8000/tcp: Quaestor web UI
+webui: "http://[HOST]:[PORT:8000]"
+options:
+  database_encryption_key: ""
+  allow_new_user_registration: true
+  default_language: en
+  default_currency: EUR
+  display_timezone: UTC
+  log_level: INFO
+  sync_interval_hours: 12
+  max_attachment_size_mb: 20
+  forwarded_allow_ips: ""
+schema:
+  database_encryption_key: password
+  allow_new_user_registration: bool
+  default_language: list(en|de)
+  default_currency: list(EUR|USD|GBP|CHF|JPY|CAD|AUD)
+  display_timezone: str
+  log_level: list(DEBUG|INFO|WARNING|ERROR)
+  sync_interval_hours: float
+  max_attachment_size_mb: int
+  forwarded_allow_ips: str
