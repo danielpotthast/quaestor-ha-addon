@@ -1,0 +1,38 @@
+name: Sync add-on version with upstream Quaestor release
+
+on:
+  workflow_dispatch: {} # Triggered by the upstream repo (felixschndr/quaestor)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream-version
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine latest upstream release
+        id: upstream
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest=$(gh api repos/felixschndr/quaestor/releases/latest --jq .tag_name)
+          [[ -n "$latest" && "$latest" != "null" ]] || { echo "no upstream version" >&2; exit 1; }
+          echo "version=$latest" >> "$GITHUB_OUTPUT"
+          echo "Latest upstream release: $latest"
+
+      - name: Bump config.yaml + build.yaml to the latest upstream version
+        env:
+          NEW: ${{ steps.upstream.outputs.version }}
+        run: |
+          sed -i -E "s/^(version:[[:space:]]*\").*(\".*)$/\1${NEW}\2/" quaestor/config.yaml
+          sed -i -E "s|(ghcr\.io/felixschndr/quaestor:).*|\1${NEW}|" quaestor/build.yaml
+
+      - uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Bump Quaestor to ${{ steps.upstream.outputs.version }}"
