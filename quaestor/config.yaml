@@ -1,5 +1,5 @@
 name: Quaestor
-version: "0.3.17"
+version: "0.3.18"
 slug: quaestor
 description: Consolidates the balances and transactions from all your banks into a single, private, self-hosted view.
 url: https://github.com/felixschndr/quaestor
